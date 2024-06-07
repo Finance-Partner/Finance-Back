@@ -255,11 +255,20 @@ public class FLService {
                 isMember = true;
         }
 
+        List<FLDto.FixedInfos> fixedInfos = fixedRepository.findByFinancialLedger_Id(flId).stream().map(fixed -> FLDto.FixedInfos.builder()
+                .flId(fixed.getFinancialLedger().getId())
+                .content(fixed.getContent())
+                .amount(fixed.getAmount())
+                .date(fixed.getDate())
+                .isIncome(fixed.isIncome())
+                .build()).collect(Collectors.toList());
+
         if(isMember == true){
             return FLDto.FLInfos.builder().
                     title(financialLedger.getTitle()).
                     budget(financialLedger.getBudget()).
                     userIds(userIds).
+                    fixedInfos(fixedInfos).
                     headId(financialLedger.getUser().getId()).build();
         }else
             throw new IllegalArgumentException("본인이 속한 가계부에서만 정보를 조회할 수 있습니다.");

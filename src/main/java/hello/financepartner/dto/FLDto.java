@@ -43,7 +43,10 @@ public class FLDto {
         Long budget;
         List<Long> userIds;
         Long headId;
+        // 고정 수입/지출 정보
+        List<FixedInfos> fixedInfos;
     }
+
 
 
     @Builder
