@@ -1,16 +1,13 @@
 package hello.financepartner.service;
 
-import hello.financepartner.domain.FinancialLedger;
-import hello.financepartner.domain.Fixed;
-import hello.financepartner.domain.JoinList;
-import hello.financepartner.domain.Users;
+import hello.financepartner.domain.*;
+import hello.financepartner.domain.status.Category;
+import hello.financepartner.domain.status.IsIncom;
 import hello.financepartner.domain.status.Joined;
 import hello.financepartner.dto.FLDto;
-import hello.financepartner.repository.FinancialLedgerRepository;
-import hello.financepartner.repository.FixedRepository;
-import hello.financepartner.repository.JoinListRepository;
-import hello.financepartner.repository.UserRepository;
+import hello.financepartner.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +25,7 @@ public class FLService {
     private final UserRepository userRepository;
     private final JoinListRepository joinListRepository;
     private final FixedRepository fixedRepository;
+    private final HistoryRepository historyRepository;
 
     public void createFL(FLDto.FLInfo flInfo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -352,5 +350,49 @@ public class FLService {
             fixedRepository.deleteById(fixedId);
         }else
             throw new IllegalArgumentException("본인이 속한 가계부에서만 고정 지출을 삭제할 수 있습니다.");
+    }
+
+
+    // 매달 고정 수입/지출을 처리하는 메서드
+    @Scheduled(cron = "0 0 0 * * *")
+    public void processMonthlyFixedTransactions() {
+        List<Fixed> fixedTransactions = fixedRepository.findAll();
+
+        LocalDate today = LocalDate.now(); // 오늘 날짜를 가져옵니다.
+        int todayDate = today.getDayOfMonth(); // 오늘의 일을 가져옵니다
+        // 이중 오늘이 고정 지출/수입 날짜인 경우의 리스트만 다시 가져옴
+        List<Fixed> todayFixedTransactions = fixedTransactions.stream()
+                .filter(fixed -> fixed.getDate() == todayDate)
+                .collect(Collectors.toList());
+
+        for (Fixed fixed : todayFixedTransactions) {
+            Long flId = fixed.getFinancialLedger().getId();
+
+            // 가계부가 수입인지 지출인지를 가져옴
+            boolean isIncome = fixed.isIncome();
+            IsIncom isIncom = isIncome ? IsIncom.INCOME : IsIncom.EXPENDITURE;
+
+            // history 생성
+            History history = new History();
+            history.setAmount(fixed.getAmount());
+            history.setContent(fixed.getContent());
+            history.setCategory(Category.FIXED);
+            history.setUser(fixed.getFinancialLedger().getUser());
+            history.setIsIncom(isIncom);
+            history.setFinancialLedger(fixed.getFinancialLedger());
+            history.setDate(today);
+            historyRepository.save(history);
+
+            // 가계부 예산 처리
+            FinancialLedger financialLedger = flRepository.findById(flId).get();
+            Long budget = financialLedger.getBudget();
+            if (isIncome) {
+                budget += fixed.getAmount();
+            } else {
+                budget -= fixed.getAmount();
+            }
+            financialLedger.setBudget(budget);
+        }
+
     }
 }
