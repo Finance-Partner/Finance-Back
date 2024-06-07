@@ -1,5 +1,6 @@
 package hello.financepartner.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -42,5 +43,19 @@ public class FLDto {
         Long budget;
         List<Long> userIds;
         Long headId;
+    }
+
+
+    @Builder
+    @Data
+    @Schema(description = "고정 수입/지출 정보")
+    public static class FixedInfos {
+        Long flId;
+        String content; // 고정 수입/지출 내용
+        Long amount; // 고정 수입/지출 금액
+        int date; // 매달 지출/수입 날짜
+
+        @JsonProperty("isIncome")
+        boolean isIncome; // 수입인지 지출인지
     }
 }

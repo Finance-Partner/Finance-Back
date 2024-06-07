@@ -29,6 +29,9 @@ public class FinancialLedger {
     @OneToMany(mappedBy = "financialLedger", cascade = CascadeType.ALL)
     private List<Notice> notices = new ArrayList<>();
 
+    @OneToMany(mappedBy = "financialLedger", cascade = CascadeType.ALL)
+    private List<Fixed> fixeds = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Users user;
 }

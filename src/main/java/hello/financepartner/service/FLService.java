@@ -1,11 +1,13 @@
 package hello.financepartner.service;
 
 import hello.financepartner.domain.FinancialLedger;
+import hello.financepartner.domain.Fixed;
 import hello.financepartner.domain.JoinList;
 import hello.financepartner.domain.Users;
 import hello.financepartner.domain.status.Joined;
 import hello.financepartner.dto.FLDto;
 import hello.financepartner.repository.FinancialLedgerRepository;
+import hello.financepartner.repository.FixedRepository;
 import hello.financepartner.repository.JoinListRepository;
 import hello.financepartner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class FLService {
     private final FinancialLedgerRepository flRepository;
     private final UserRepository userRepository;
     private final JoinListRepository joinListRepository;
+    private final FixedRepository fixedRepository;
 
     public void createFL(FLDto.FLInfo flInfo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -284,5 +287,41 @@ public class FLService {
             flRepository.findById(flId).get().setBudget(budget);
         }else
             throw new IllegalArgumentException("본인이 속한 가계부에서만 예산을 수정할 수 있습니다.");
+    }
+
+    public Long createFixed(FLDto.FixedInfos fixedInfos) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Long userId = Long.parseLong(username);
+        List<JoinList> joinLists = joinListRepository.findByUser_Id(userId);
+        Boolean isMember = false;
+
+        for (JoinList joinList : joinLists) {
+            if(joinList.getFinancialLedger().getId().equals(fixedInfos.getFlId()))
+                isMember = true;
+        }
+
+        FinancialLedger financialLedger = flRepository.findById(fixedInfos.getFlId()).get();
+
+        if(financialLedger == null)
+            throw new IllegalArgumentException("가계부가 존재하지 않습니다.");
+
+        // 금액, 날짜가 정상적인 값이 아니면 예외처리
+        if(fixedInfos.getAmount() < 0)
+            throw new IllegalArgumentException("고정 지출/수입 금액은 0 이상이여야 합니다.");
+        if(fixedInfos.getDate() < 1 || fixedInfos.getDate() > 31)
+            throw new IllegalArgumentException("고정 지출/수입 날짜는 1~31 사이여야 합니다.");
+
+        if(isMember == true){
+            Fixed fixed = new Fixed();
+            fixed.setAmount(fixedInfos.getAmount());
+            fixed.setContent(fixedInfos.getContent());
+            fixed.setDate(fixedInfos.getDate());
+            fixed.setIncome(fixedInfos.isIncome());
+            fixed.setFinancialLedger(financialLedger);
+            fixedRepository.save(fixed);
+            return fixed.getId();
+        }else
+            throw new IllegalArgumentException("본인이 속한 가계부에서만 고정 지출을 추가할 수 있습니다.");
     }
 }

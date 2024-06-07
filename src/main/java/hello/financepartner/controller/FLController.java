@@ -128,4 +128,15 @@ public class FLController {
         return ResponseEntity.ok(UserDto.CheckResult.builder().result("가계부 "+ flId +"번에서 예산을"+ budget+"로 변경했습니다.").build());
     }
 
+    @PostMapping("/fl/fixed")
+    @Operation(
+            summary = "고정 수입/지출 추가",
+            description = "고정 지출을 추가합니다. 고정 과 고정 지출 금액을 주면 고정 지출이 생성됩니다."
+    )
+    public ResponseEntity<UserDto.CheckResult> createFixed(FLDto.FixedInfos fixedInfos) {
+        Long fixedId = flService.createFixed(fixedInfos);
+        String string = fixedId.toString();
+        return ResponseEntity.ok(UserDto.CheckResult.builder().result(string).build());
+    }
+
 }
