@@ -139,4 +139,14 @@ public class FLController {
         return ResponseEntity.ok(UserDto.CheckResult.builder().result(string).build());
     }
 
+    @DeleteMapping("/fl/fixed")
+    @Operation(
+            summary = "고정 수입/지출 삭제",
+            description = "고정 지출을 삭제합니다."
+    )
+    public ResponseEntity<UserDto.CheckResult> deleteFixed(Long fixedId) {
+        flService.deleteFixed(fixedId);
+        return ResponseEntity.ok(UserDto.CheckResult.builder().result("고정 지출 "+ fixedId +"번을 삭제했습니다.").build());
+    }
+
 }

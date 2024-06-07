@@ -324,4 +324,24 @@ public class FLService {
         }else
             throw new IllegalArgumentException("본인이 속한 가계부에서만 고정 지출을 추가할 수 있습니다.");
     }
+
+    public void deleteFixed(Long fixedId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Long userId = Long.parseLong(username);
+        Fixed fixed = fixedRepository.findById(fixedId).get();
+        Long flId = fixed.getFinancialLedger().getId();
+        List<JoinList> joinLists = joinListRepository.findByUser_Id(userId);
+        Boolean isMember = false;
+
+        for (JoinList joinList : joinLists) {
+            if(joinList.getFinancialLedger().getId().equals(flId))
+                isMember = true;
+        }
+
+        if(isMember == true){
+            fixedRepository.deleteById(fixedId);
+        }else
+            throw new IllegalArgumentException("본인이 속한 가계부에서만 고정 지출을 삭제할 수 있습니다.");
+    }
 }
