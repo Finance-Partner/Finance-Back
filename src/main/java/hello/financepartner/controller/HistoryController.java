@@ -61,10 +61,19 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
+    @GetMapping("/history/{flId}/{year}")
+    @Operation(
+            summary = "수입/지출 1년 내역 불러오기",
+            description = "가계부 하나의 1년 수입/지출 내역을 가져옵니다."
+    )
+    public ResponseEntity<List<HistoryDto.Info>> getYearHistory(@PathVariable Long flId,@PathVariable int year) {
+        List<HistoryDto.Info> monthHistory = historyService.getYearHistory(flId, year);
+        return ResponseEntity.ok(monthHistory);
+    }
 
     @GetMapping("/history/{flId}/{year}/{month}")
     @Operation(
-            summary = "수입/지출 한달 내역 불러오기.",
+            summary = "수입/지출 한달 내역 불러오기",
             description = "가계부 하나의 한달 수입/지출 내역을 가져옵니다."
     )
     public ResponseEntity<List<HistoryDto.Info>> getMonthHistory(@PathVariable Long flId,@PathVariable int year, @PathVariable int month) {
@@ -75,7 +84,7 @@ public class HistoryController {
 
     @GetMapping("/history/{flId}/{year}/{month}/{day}")
     @Operation(
-            summary = "수입/지출 하루 내역 불러오기.",
+            summary = "수입/지출 하루 내역 불러오기",
             description = "가계부 하루 수입/지출 내역을 가져옵니다."
     )
     public ResponseEntity<List<HistoryDto.Info>> getMonthAndDayHistory(@PathVariable Long flId,@PathVariable int year,@PathVariable int month,@PathVariable int day) {

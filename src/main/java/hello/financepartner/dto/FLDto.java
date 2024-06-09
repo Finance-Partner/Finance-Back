@@ -44,9 +44,21 @@ public class FLDto {
         List<Long> userIds;
         Long headId;
         // 고정 수입/지출 정보
-        List<FixedInfos> fixedInfos;
+        List<FixedInfo2> fixedInfo2;
     }
 
+
+    @Builder
+    @Data
+    public static class FixedInfo2 {
+        Long fixId;
+        String content; // 고정 수입/지출 내용
+        Long amount; // 고정 수입/지출 금액
+        int date; // 매달 지출/수입 날짜
+
+        @JsonProperty("isIncome")
+        boolean isIncome; // 수입인지 지출인지
+    }
 
 
     @Builder

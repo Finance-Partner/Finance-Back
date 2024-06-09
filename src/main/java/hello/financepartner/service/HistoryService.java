@@ -243,4 +243,38 @@ public class HistoryService {
         } else
             throw new IllegalArgumentException("본인이 속한 가계부에서만 지출내역을 기록할 수 있습니다. 있습니다.");
     }
+
+    public List<HistoryDto.Info> getYearHistory(Long flId, int year) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Long userId = Long.parseLong(username);
+        List<JoinList> joinLists = joinListRepository.findByUser_Id(userId);
+        Boolean isMember = false;
+        for (JoinList joinList : joinLists) {
+            if (joinList.getFinancialLedger().getId().equals(flId))
+                isMember = true;
+        }
+
+        if (isMember == true) {
+            LocalDate startOfYear = LocalDate.of(year, 1, 1);
+            LocalDate endOfYear = LocalDate.of(year, 12, 31);
+
+            List<History> historys = historyRepository.findByFinancialLedger_IdAndDateBetween(flId, startOfYear, endOfYear);
+            List<HistoryDto.Info> historyInfoList = new ArrayList<>();
+
+            for (History history : historys) {
+                HistoryDto.Info historyInfo = HistoryDto.Info.builder()
+                        .id(history.getId())
+                        .date(history.getDate())
+                        .amount(history.getAmount())
+                        .content(history.getContent())
+                        .category(history.getCategory())
+                        .isIncome(history.getIsIncom())
+                        .build();
+                historyInfoList.add(historyInfo);
+            }
+            return historyInfoList;
+        } else
+            throw new IllegalArgumentException("본인이 속한 가계부에서만 지출내역을 기록할 수 있습니다. 있습니다.");
+    }
 }

@@ -61,7 +61,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://travellog.site", "https://travellog.site"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://travellog.site", "https://travellog.site","https://d3axi5win6ol31.cloudfront.net/","http://d3axi5win6ol31.cloudfront.net/"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
