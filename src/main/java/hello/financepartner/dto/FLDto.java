@@ -33,6 +33,7 @@ public class FLDto {
     public static class FLUsers {
         Long userId;
         String name;
+        String photo;
     }
 
     @Builder

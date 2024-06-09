@@ -137,8 +137,8 @@ public class UserController {
     )
     public ResponseEntity<UserDto.NamecheckInfo> emailToName(UserDto.EmailInfo emailInfo) {
         String email = emailInfo.getEmail();
-        String name = userService.emailToName(email);
-        return ResponseEntity.ok(UserDto.NamecheckInfo.builder().name(name).build());
+        UserDto.NamecheckInfo namecheckInfo = userService.emailToName(email);
+        return ResponseEntity.ok(namecheckInfo);
     }
 
     @DeleteMapping("/user")

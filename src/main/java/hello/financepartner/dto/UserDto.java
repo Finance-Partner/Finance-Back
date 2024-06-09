@@ -63,6 +63,7 @@ public class UserDto {
     @Schema(description = "이름 정보")
     public static class NamecheckInfo {
         String name;
+        String photo;
     }
 
     @Builder

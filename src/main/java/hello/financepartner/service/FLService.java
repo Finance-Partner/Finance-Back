@@ -104,6 +104,7 @@ public class FLService {
                     .map(joinList -> FLDto.FLUsers.builder()
                             .userId(joinList.getUser().getId())
                             .name(joinList.getUser().getName())
+                            .photo(joinList.getUser().getPhoto())
                             .build())
                     .collect(Collectors.toList());
             return flUsers;

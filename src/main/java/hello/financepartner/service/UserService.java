@@ -132,9 +132,10 @@ public class UserService {
     }
 
 
-    public String emailToName(String email) {
+    public UserDto.NamecheckInfo emailToName(String email) {
         String name = userRepository.findByEmail(email).getName();
-        return name;
+        String photo = userRepository.findByEmail(email).getPhoto();
+        return UserDto.NamecheckInfo.builder().name(name).photo(photo).build();
     }
 
 
