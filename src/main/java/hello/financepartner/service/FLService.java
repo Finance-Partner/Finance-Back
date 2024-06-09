@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -394,5 +395,37 @@ public class FLService {
             financialLedger.setBudget(budget);
         }
 
+    }
+
+    public Long getFLRank(Long flId) {
+        List<FinancialLedger> financialLedgers = flRepository.findAll();
+        FinancialLedger financialLedger = flRepository.findById(flId).get();
+
+        // 현재 날짜와 이번 달의 시작, 끝 날짜를 계산
+        LocalDate now = LocalDate.now();
+        YearMonth currentMonth = YearMonth.from(now);
+        LocalDate startOfMonth = currentMonth.atDay(1);
+        LocalDate endOfMonth = currentMonth.atEndOfMonth();
+
+        // 각각의 financialLedger의 이번 달 지출의 합계를 리스트에 저장
+        List<Long> totalExpenditureList = financialLedgers.stream()
+                .map(fl -> historyRepository.findByFinancialLedger_IdAndIsIncomAndDateBetween(
+                        fl.getId(), IsIncom.EXPENDITURE, startOfMonth, endOfMonth))
+                .map(historyList -> historyList.stream().mapToLong(History::getAmount).sum())
+                .collect(Collectors.toList());
+
+        // financialLedger의 이번 달 지출의 합계를 가져옴
+        Long totalExpenditure = historyRepository.findByFinancialLedger_IdAndIsIncomAndDateBetween(
+                        flId, IsIncom.EXPENDITURE, startOfMonth, endOfMonth)
+                .stream().mapToLong(History::getAmount).sum();
+
+        // financialLedger의 지출의 합계가 전체 financialLedger의 지출의 합계 중 몇 번째인지 계산
+        long rank = totalExpenditureList.stream().filter(total -> total > totalExpenditure).count() + 1;
+
+        // 전체 financialLedger의 수를 가져옴
+        long totalFinancialLedgerCount = financialLedgers.size();
+
+        // 전체 financialLedger 중 financialLedger의 지출의 합계가 몇 번째인지를 반환
+        return rank * 100 / totalFinancialLedgerCount;
     }
 }

@@ -149,4 +149,14 @@ public class FLController {
         return ResponseEntity.ok(UserDto.CheckResult.builder().result("고정 지출 "+ fixedId +"번을 삭제했습니다.").build());
     }
 
+    @GetMapping("/fl/rank/{flId}")
+    @Operation(
+            summary = "가계부 이번달 지출 순위 확인",
+            description = "가계부 지출이 전체 가계부의 지출에 비해 어느정도인지 확인, 100일수록 많이 지출함"
+    )
+    public ResponseEntity<Long> getFLRank(@PathVariable Long flId) {
+        Long rankRate =  flService.getFLRank(flId);
+        return ResponseEntity.ok(rankRate);
+    }
+
 }
