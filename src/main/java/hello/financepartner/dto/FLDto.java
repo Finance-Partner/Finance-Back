@@ -24,7 +24,6 @@ public class FLDto {
     @Schema(description = "가계부 생성시 제공하는 정보")
     public static class FLInfo2 {
         Long flId;
-        Long budget;
         String title;
     }
     @Builder

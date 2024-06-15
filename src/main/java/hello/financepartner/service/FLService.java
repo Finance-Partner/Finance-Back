@@ -62,16 +62,10 @@ public class FLService {
         Long userId = Long.parseLong(username);
 
         Long flId = flInfo.getFlId();
-        if (flInfo.getBudget() < 0) {
-            throw new IllegalArgumentException("가계부의 예산은 음수가 될 수 없습니다.");
-        }
 
         JoinList finded = joinListRepository.findByUser_IdAndFinancialLedger_Id(userId, flId);
 
         if (finded != null && finded.getJoined() == Joined.JOINED) {
-            if (flInfo.getBudget() != null)
-                flRepository.findById(flId).get().setBudget(flInfo.getBudget());
-
             if (flInfo.getTitle() != null)
                 flRepository.findById(flId).get().setTitle(flInfo.getTitle());
         } else
