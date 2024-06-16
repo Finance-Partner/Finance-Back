@@ -155,14 +155,21 @@ public class UserService {
         List<JoinList> joinLists = joinListRepository.findByUser_Id(userId);
 
         List<UserDto.LegendInfo> myFlList = new ArrayList<>();
+        List<UserDto.LegendInfo> myManageFlList = new ArrayList<>();
         List<Long> invitedList = new ArrayList<>();
 
         for (JoinList joinList : joinLists) {
             if (joinList.getJoined() == Joined.JOINED)
+            {
                 // 가계부의 id와 이름을 LegendInfo에 저장후 이것을 myFlList에 저장
                 myFlList.add(UserDto.LegendInfo.builder().id(joinList.getFinancialLedger().getId()).name(joinList.getFinancialLedger().getTitle()).build());
-                else
+                // 가계부장인 경우 가계부의 id와 이름을 LegendInfo에 저장후 이것을 myManageFlList에 저장
+                if (joinList.getFinancialLedger().getUser().getId() == userId)
+                    myManageFlList.add(UserDto.LegendInfo.builder().id(joinList.getFinancialLedger().getId()).name(joinList.getFinancialLedger().getTitle()).build());
+            } else {
                 invitedList.add(joinList.getFinancialLedger().getId());
+            }
+
 
         }
 
@@ -174,6 +181,7 @@ public class UserService {
                 name(user.getName()).
                 myFlLists(myFlList).
                 invitedLists(invitedList)
+                .myManageFlLists(myManageFlList)
                 .build();
 
     }

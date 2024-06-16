@@ -91,6 +91,7 @@ public class UserDto {
         String photo;
         Long userId;
         List<LegendInfo> myFlLists;
+        List<LegendInfo> myManageFlLists;
         List<Long> invitedLists;
     }
 
