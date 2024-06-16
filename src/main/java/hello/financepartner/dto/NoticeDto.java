@@ -16,6 +16,7 @@ public class NoticeDto {
     public static class NoticeInfo {
         String content;
         String name;
+        String photo;
         Long userId;
         LocalDateTime time;
     }

@@ -28,8 +28,8 @@ public class NoticeController {
 
     @GetMapping("/notice")
     @Operation(
-            summary = "가계부 채팅 작성",
-            description = "가계부 채팅을 작성합니다."
+            summary = "가계부 채팅 조회",
+            description = "가계부 채팅을 가져옵니다."
     )
     public ResponseEntity<List<NoticeDto.NoticeInfo>> readNotice(Long flId) {
         List<NoticeDto.NoticeInfo> noticeInfos = noticeService.readNotice(flId);

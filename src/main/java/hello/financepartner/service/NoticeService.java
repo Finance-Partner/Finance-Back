@@ -71,6 +71,7 @@ public class NoticeService {
                             .content(notice.getContent())
                             .name(notice.getUser().getName()) // Lazy 로딩으로 인해 N+1 문제가 발생할 수 있습니다.
                             .userId(notice.getUser().getId())
+                            .photo(notice.getUser().getPhoto())
                             .time(notice.getDate())
                             .build())
                     .collect(Collectors.toList());
