@@ -99,6 +99,7 @@ public class FLService {
                             .userId(joinList.getUser().getId())
                             .name(joinList.getUser().getName())
                             .photo(joinList.getUser().getPhoto())
+                            .isHead(joinList.getUser().getId().equals(finded.getFinancialLedger().getUser().getId()))
                             .build())
                     .collect(Collectors.toList());
             return flUsers;

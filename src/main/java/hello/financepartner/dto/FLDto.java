@@ -33,6 +33,7 @@ public class FLDto {
         Long userId;
         String name;
         String photo;
+        boolean isHead;
     }
 
     @Builder
