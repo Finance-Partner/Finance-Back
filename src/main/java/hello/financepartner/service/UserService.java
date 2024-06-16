@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -153,13 +154,14 @@ public class UserService {
         Users user = userRepository.findById(userId).get();
         List<JoinList> joinLists = joinListRepository.findByUser_Id(userId);
 
-        List<Long> myFlList = new ArrayList<>();
+        List<UserDto.LegendInfo> myFlList = new ArrayList<>();
         List<Long> invitedList = new ArrayList<>();
 
         for (JoinList joinList : joinLists) {
             if (joinList.getJoined() == Joined.JOINED)
-                myFlList.add(joinList.getFinancialLedger().getId());
-            else
+                // 가계부의 id와 이름을 LegendInfo에 저장후 이것을 myFlList에 저장
+                myFlList.add(UserDto.LegendInfo.builder().id(joinList.getFinancialLedger().getId()).name(joinList.getFinancialLedger().getTitle()).build());
+                else
                 invitedList.add(joinList.getFinancialLedger().getId());
 
         }
@@ -194,7 +196,7 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다..");
         }
 
-        if(emailVerifyRepository.findByEmail(email) != null)
+        if (emailVerifyRepository.findByEmail(email) != null)
             emailVerifyRepository.delete(emailVerifyRepository.findByEmail(email));
 
         String verifyCode = getVerifyCode();

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class UserDto {
@@ -89,8 +90,15 @@ public class UserDto {
         String email;
         String photo;
         Long userId;
-        List<Long> myFlLists;
+        List<LegendInfo> myFlLists;
         List<Long> invitedLists;
+    }
+
+    @Builder
+    @Data
+    public static class LegendInfo {
+        Long id;
+        String name;
     }
 
     @Builder
