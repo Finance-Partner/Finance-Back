@@ -92,7 +92,7 @@ public class UserDto {
         Long userId;
         List<LegendInfo> myFlLists;
         List<LegendInfo> myManageFlLists;
-        List<Long> invitedLists;
+        List<LegendInfo> invitedLists;
     }
 
     @Builder

@@ -156,7 +156,7 @@ public class UserService {
 
         List<UserDto.LegendInfo> myFlList = new ArrayList<>();
         List<UserDto.LegendInfo> myManageFlList = new ArrayList<>();
-        List<Long> invitedList = new ArrayList<>();
+        List<UserDto.LegendInfo> invitedList = new ArrayList<>();
 
         for (JoinList joinList : joinLists) {
             if (joinList.getJoined() == Joined.JOINED)
@@ -167,9 +167,9 @@ public class UserService {
                 if (joinList.getFinancialLedger().getUser().getId() == userId)
                     myManageFlList.add(UserDto.LegendInfo.builder().id(joinList.getFinancialLedger().getId()).name(joinList.getFinancialLedger().getTitle()).build());
             } else {
-                invitedList.add(joinList.getFinancialLedger().getId());
+                // 초대된 가계부의 id를 invitedList에 저장
+                invitedList.add(UserDto.LegendInfo.builder().id(joinList.getFinancialLedger().getId()).name(joinList.getFinancialLedger().getTitle()).build());
             }
-
 
         }
 
