@@ -92,8 +92,13 @@ public class FLService {
         Long userId = Long.parseLong(username);
         JoinList finded = joinListRepository.findByUser_IdAndFinancialLedger_Id(userId, flId);
 
-        if (finded != null && finded.getJoined() == Joined.JOINED) {
+        if (finded != null) {
             List<JoinList> joinLists = joinListRepository.findByFinancialLedger_Id(flId);
+            // JoinList에서 JOINED 상태인 것들만 남기기
+            joinLists = joinLists.stream()
+                    .filter(joinList -> joinList.getJoined().equals(Joined.JOINED))
+                    .collect(Collectors.toList());
+
             List<FLDto.FLUsers> flUsers = joinLists.stream()
                     .map(joinList -> FLDto.FLUsers.builder()
                             .userId(joinList.getUser().getId())
