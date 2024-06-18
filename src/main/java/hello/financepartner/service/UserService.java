@@ -213,7 +213,7 @@ public class UserService {
                 + "<h1>인증번호 안내</h1>"
                 + "<p>안녕하세요, 회원님의 인증코드를 보내드립니다.</p>"
                 + "<p><strong>인증번호: </strong>" + verifyCode + "</p>"
-                + "<a href='http://localhost:5173' target='_blank'>홈페이지로 이동</a>"
+                + "<a href='http://fphosting.s3-website.ap-northeast-2.amazonaws.com/' target='_blank'>홈페이지로 이동</a>"
                 + "<p>감사합니다.</p>"
                 + "</body>"
                 + "</html>";
@@ -223,7 +223,7 @@ public class UserService {
         emailVerify.setEmail(email);
         emailVerify.setCertification(verifyCode);
         emailVerifyRepository.save(emailVerify);
-        sendingEmail.sendMail(email, "[Finance Partner] 인증번호입니다", htmlContent);
+        sendingEmail.sendMail(email, "[MOAYO] 인증번호입니다", htmlContent);
     }
 
     public String checkEmailVerify(UserDto.EmailVerify emailVerify) {
